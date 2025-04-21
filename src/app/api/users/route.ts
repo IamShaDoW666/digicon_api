@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   //TODO: Check Auth
   const users = await prisma.user.findMany({ omit: { password: true } });
   if (!users) {

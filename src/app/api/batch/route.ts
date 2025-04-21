@@ -6,7 +6,7 @@ import fs from "fs";
 import sharp from "sharp";
 import { withAuth } from "@/lib/middleware/withAuth";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const batches = await prisma.batch.findMany({
       include: { media: true, createdBy: true },

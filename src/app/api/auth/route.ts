@@ -7,14 +7,10 @@ export async function GET(req: NextRequest) {
   if (!token) {
     return sendError("No token provided", 401);
   }
-  return jwt.verify(
-    token,
-    process.env.JWT_SECRET!,
-    (err: any, decoded: any) => {
-      if (err) {
-        return sendError("Invalid token", 401);
-      }
-      return sendSuccess(decoded, "Token is valid", 200);
+  return jwt.verify(token, process.env.JWT_SECRET!, (err, decoded) => {
+    if (err) {
+      return sendError("Invalid token", 401);
     }
-  );
+    return sendSuccess(decoded, "Token is valid", 200);
+  });
 }

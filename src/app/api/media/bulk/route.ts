@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 import path from "path";
 import fs from "fs/promises";
 
-export const DELETE = withAuth(async (request: NextRequest, user) => {
+export const DELETE = withAuth(async (request: NextRequest) => {
   try {
     const { mediaIds } = await request.json();
     if (!mediaIds || !Array.isArray(mediaIds)) {

@@ -1,12 +1,12 @@
 import { NextRequest } from "next/server";
 import { sendError, sendSuccess } from "@/lib/network";
 import { prisma } from "@/lib/db";
-export async function GET(
+export const GET = async (
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+) => {
   try {
-    const { id } = params;
+    const { id } = await params;
     if (!id) {
       return sendError("Batch ID is required", 400);
     }
@@ -21,4 +21,4 @@ export async function GET(
     console.error(error);
     return sendError("Internal server error", 500);
   }
-}
+};

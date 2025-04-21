@@ -27,6 +27,7 @@ export function withAuth(handler: AuthenticatedHandler) {
     try {
       payload = jwt.verify(token, SECRET) as UserAuth; // verify & decode :contentReference[oaicite:4]{index=4}
     } catch (err) {
+      console.log(err);
       return sendError("Unauthenticated", 401); // handle error :contentReference[oaicite:5]{index=5}
     }
 

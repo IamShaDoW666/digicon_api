@@ -15,6 +15,7 @@ export function sendSuccess<T>(data: T, message = "Success", statusCode = 200) {
 }
 
 // Error Response
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function sendError(
   message = "Something went wrong",
   statusCode = 500,
