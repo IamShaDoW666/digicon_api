@@ -16,6 +16,7 @@ COPY . .
 
 # Build the application
 RUN pnpm build
+RUN pnpx prisma generate
 
 # Stage 2: Create production image
 FROM node:20-alpine AS runner
