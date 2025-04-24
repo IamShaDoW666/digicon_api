@@ -18,7 +18,6 @@ import {
   IconSettings,
   IconFiles,
   IconUsers,
-  IconPhotoScan,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -49,12 +48,12 @@ const data = {
 
     {
       title: "Users",
-      url: "admin/users",
+      url: "/admin/users",
       icon: IconUsers,
     },
     {
       title: "Batches",
-      url: "admin/batches",
+      url: "/admin/batches",
       icon: IconFiles,
     },
     // {

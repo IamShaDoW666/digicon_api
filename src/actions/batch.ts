@@ -1,5 +1,5 @@
 "use server";
-import { prisma } from "@/lib/db";
+import { createReference, prisma } from "@/lib/db";
 import path from "path";
 import fs from "fs/promises";
 export const deleteBatch = async (id: string) => {
@@ -37,5 +37,42 @@ export const deleteBatch = async (id: string) => {
   return {
     success: true,
     message: "Batch deleted successfully",
+  };
+};
+
+export const updateBatch = async (data: { reference: string; id: string }) => {
+  const { reference, id } = data;
+  if (!reference) {
+    return {
+      success: false,
+      message: "Reference is required",
+    };
+  }
+  const batch = await prisma.batch.findFirst({
+    where: {
+      id,
+    },
+  });
+  if (!batch) {
+    return {
+      success: false,
+      message: "Batch not found",
+    };
+  }
+  let ref = batch.reference;
+  if (ref.slice(7) !== reference) {
+    ref = createReference(reference);
+  }
+  await prisma.batch.update({
+    where: {
+      id,
+    },
+    data: {
+      reference: ref,
+    },
+  });
+  return {
+    success: true,
+    message: "Batch updated successfully",
   };
 };

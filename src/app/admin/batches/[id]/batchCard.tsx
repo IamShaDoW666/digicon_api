@@ -20,25 +20,42 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { updateBatch } from "@/actions/batch";
 
 // Define the form schema using zod
 const batchSchema = z.object({
   reference: z.string().min(1, "Reference is required"),
+  id: z.string().min(1, "ID is required"),
 });
 
 type BatchFormValues = z.infer<typeof batchSchema>;
 
 interface BatchCardProps {
   reference: string;
+  id: string;
 }
 
-export function BatchCard({ reference }: BatchCardProps) {
+export function BatchCard({ reference, id }: BatchCardProps) {
   const form = useForm<BatchFormValues>({
     resolver: zodResolver(batchSchema),
-    defaultValues: { reference },
+    defaultValues: { reference: reference.slice(7), id },
   });
 
-  const handleSubmit = (data: BatchFormValues) => {};
+  const handleSubmit = async (data: BatchFormValues) => {
+    try {
+      const res = await updateBatch(data);
+      if (res.success) {
+        toast("Batch updated successfully");
+        window.location.reload(); // Reload the page to reflect changes
+      } else {
+        toast.error(res.message || "Failed to update batch");
+      }
+    } catch (error) {
+      console.error("Error updating batch:", error);
+      toast.error("Failed to update batch");
+    }
+  };
 
   return (
     <Card className="w-full max-w-md">

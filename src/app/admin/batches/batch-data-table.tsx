@@ -108,6 +108,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { deleteBatch } from "@/actions/batch";
 import { Toaster } from "@/components/ui/sonner";
+import { DeleteIcon, Trash2 } from "lucide-react";
 
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
@@ -130,36 +131,36 @@ function DragHandle({ id }: { id: string }) {
 
 const columns: ColumnDef<BatchWithMediaAndCreatedBy>[] = [
   {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
+    id: "number",
+    header: "#",
+    cell: ({ row }) => <Badge variant={"outline"}>{row.index + 1}</Badge>,
   },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <div className="flex items-center justify-center">
+  //       <Checkbox
+  //         checked={
+  //           table.getIsAllPageRowsSelected() ||
+  //           (table.getIsSomePageRowsSelected() && "indeterminate")
+  //         }
+  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //         aria-label="Select all"
+  //       />
+  //     </div>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="flex items-center justify-center">
+  //       <Checkbox
+  //         checked={row.getIsSelected()}
+  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //         aria-label="Select row"
+  //       />
+  //     </div>
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "reference",
     header: "Reference",
@@ -212,30 +213,12 @@ const columns: ColumnDef<BatchWithMediaAndCreatedBy>[] = [
     id: "actions",
     header: () => "Actions",
     cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => handleDelete(row.original.id)}
-            variant="destructive"
-          >
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Button
+        variant={"destructive"}
+        onClick={() => handleDelete(row.original.id)}
+      >
+        <Trash2 />
+      </Button>
     ),
   },
 ];
@@ -529,6 +512,12 @@ export function DataTable({
 }
 
 async function handleDelete(id: string) {
+  const confirmed = confirm(
+    "Are you sure you want to delete this batch? This action cannot be undone."
+  );
+  if (!confirmed) {
+    return;
+  }
   try {
     const response = await deleteBatch(id);
     if (response.success) {

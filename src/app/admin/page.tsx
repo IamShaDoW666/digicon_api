@@ -25,7 +25,7 @@ const adminHome = async () => {
             <div className="px-4 lg:px-6">
               {/* <ChartAreaInteractive batches={allBatches} /> */}
             </div>
-            <DataTable data={data} />
+            {/* <DataTable data={data} /> */}
           </div>
         </div>
       </div>
