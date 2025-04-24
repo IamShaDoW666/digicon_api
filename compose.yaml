@@ -10,4 +10,5 @@ services:
       - .env
     volumes:
       - ./public/uploads:/app/public/uploads
-    command: "node server.js"
+      - ./prisma:/app/prisma
+    command: "npm run start"

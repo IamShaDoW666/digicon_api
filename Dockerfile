@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
+COPY pnpm-lock.yaml ./
 
 # Install dependencies
 RUN npm install -g pnpm
@@ -15,22 +16,21 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Build the application
-RUN pnpm build
 RUN pnpx prisma generate
+RUN pnpm build
+
 
 # Stage 2: Create production image
 FROM node:20-alpine AS runner
 
-# Set working directory
 WORKDIR /app
 
 # Copy standalone output from builder
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
-
+# COPY --from=builder /app/.next/standalone ./
+# COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app ./
 # Copy next.config.js if present
-COPY --from=builder /app/next.config.js ./
+# COPY --from=builder /app/next.config.ts ./
 
 # Expose the application port
 EXPOSE 3301

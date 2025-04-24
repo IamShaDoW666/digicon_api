@@ -1,10 +1,10 @@
 import { SiteHeader } from "@/components/site-header";
 import { prisma } from "@/lib/db";
 import UserProfile from "./components/user-profile";
-const userView = async ({ params }: { params: { id: string } }) => {
+const userView = async ({ params }: { params: Promise<{ id: string }> }) => {
   const user = await prisma.user.findFirst({
     where: {
-      id: params.id,
+      id: (await params).id,
     },
     include: {
       uploadedMedia: true,

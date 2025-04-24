@@ -1,11 +1,7 @@
 "use server";
-import {
-  userCreateSchema,
-  UserFormData,
-} from "@/app/admin/users/new-user-modal";
+import { UserFormData } from "@/app/admin/users/new-user-modal";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { z } from "zod";
 
 export const deleteUser = async (userId: string) => {
   if (!userId) {
@@ -42,7 +38,7 @@ export const updateUser = async (
   if (!user) {
     throw new Error("User not found");
   }
-  const updatedUser = await prisma.user.update({
+  await prisma.user.update({
     where: { id: userId },
     data: {
       name: name,

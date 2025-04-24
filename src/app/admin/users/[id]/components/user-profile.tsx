@@ -21,7 +21,6 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
-import { UserWithMediaAndBatches } from "../../user-data-table";
 import { updateUser } from "@/actions/user";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -39,7 +38,6 @@ type UserFormData = z.infer<typeof userSchema>;
 const UserProfile = ({
   name,
   email,
-  phone,
   id,
 }: {
   name: string;
@@ -73,7 +71,9 @@ const UserProfile = ({
           window.location.reload();
         }, 1000);
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

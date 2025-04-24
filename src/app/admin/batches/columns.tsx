@@ -25,25 +25,18 @@ export const columns: ColumnDef<Batch>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
+    cell: () => (
       <div className="flex space-x-2">
-        <button onClick={() => handleEdit(row.original)}>Edit</button>
-        <button onClick={() => handleDelete(row.original.id)}>Delete</button>
+        <button onClick={() => handleEdit()}>Edit</button>
+        <button onClick={() => handleDelete()}>Delete</button>
       </div>
     ),
   },
 ];
-function handleEdit(original: {
-  name: string | null;
-  id: string;
-  reference: string;
-  userId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}): void {
+function handleEdit(): void {
   throw new Error("Function not implemented.");
 }
 
-function handleDelete(id: string): void {
+function handleDelete(): void {
   throw new Error("Function not implemented.");
 }

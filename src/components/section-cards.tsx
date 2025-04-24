@@ -1,15 +1,10 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
-
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardAction,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Batch, Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 export type BatchWithMediaAndCreatedBy = Prisma.BatchGetPayload<{
   include: {
     media: true;

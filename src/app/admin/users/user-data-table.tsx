@@ -28,11 +28,7 @@ import {
   IconChevronsRight,
   IconCircleCheckFilled,
   IconDotsVertical,
-  IconGripVertical,
   IconLayoutColumns,
-  IconLoader,
-  IconPlus,
-  IconTrendingUp,
 } from "@tabler/icons-react";
 import {
   ColumnDef,
@@ -51,9 +47,6 @@ import {
 } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-import { Checkbox } from "@/components/ui/checkbox";
-
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -77,13 +70,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+
 import Link from "next/link";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -97,24 +85,24 @@ export type UserWithMediaAndBatches = Prisma.UserGetPayload<{
     createdBatches: true;
   };
 }>;
-function DragHandle({ id }: { id: string }) {
-  const { attributes, listeners } = useSortable({
-    id,
-  });
+// function DragHandle({ id }: { id: string }) {
+//   const { attributes, listeners } = useSortable({
+//     id,
+//   });
 
-  return (
-    <Button
-      {...attributes}
-      {...listeners}
-      variant="ghost"
-      size="icon"
-      className="text-muted-foreground size-7 hover:bg-transparent"
-    >
-      <IconGripVertical className="text-muted-foreground size-3" />
-      <span className="sr-only">Drag to reorder</span>
-    </Button>
-  );
-}
+//   return (
+//     <Button
+//       {...attributes}
+//       {...listeners}
+//       variant="ghost"
+//       size="icon"
+//       className="text-muted-foreground size-7 hover:bg-transparent"
+//     >
+//       <IconGripVertical className="text-muted-foreground size-3" />
+//       <span className="sr-only">Drag to reorder</span>
+//     </Button>
+//   );
+// }
 
 const columns: ColumnDef<UserWithMediaAndBatches>[] = [
   {
@@ -243,7 +231,7 @@ export function DataTable({
 }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [data, setData] = React.useState(() => initialData);
-  const [initalData, setInitialData] = React.useState(data);
+  const [initalData] = React.useState(data);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -271,11 +259,11 @@ export function DataTable({
         );
       })
     );
-  }, [searchTerm]);
+  }, [searchTerm, initalData]);
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
-    [data]
+  [data]
   );
 
   const table = useReactTable({

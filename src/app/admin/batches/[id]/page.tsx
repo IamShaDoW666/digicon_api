@@ -1,11 +1,12 @@
+/* eslint-disable */
 import { SiteHeader } from "@/components/site-header";
 import { prisma } from "@/lib/db";
 import Image from "next/image";
 import { BatchCard } from "./batchCard";
-const batchesList = async ({ params }: { params: { id: string } }) => {
+const batchesList = async ({ params }: { params: Promise<{ id: string }> }) => {
   const batch = await prisma.batch.findFirst({
     where: {
-      id: params.id,
+      id: (await params).id,
     },
     include: {
       media: true,
@@ -19,7 +20,7 @@ const batchesList = async ({ params }: { params: { id: string } }) => {
       <div className="flex flex-1 flex-col mx-6">
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            <BatchCard reference={batch?.reference!} id={batch?.id! } />
+            <BatchCard reference={batch?.reference!} id={batch?.id!} />
             <h2 className="font-semibold">Media</h2>
             <div className="grid grid-cols-4 gap-8">
               {batch?.media.map((media) => {

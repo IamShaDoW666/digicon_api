@@ -1,7 +1,6 @@
 // middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "./lib/auth";
-import { headers } from "next/headers";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -21,6 +20,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     } catch (err) {
       // Invalid token; redirect to login
+      console.log(err);
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
@@ -34,6 +34,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/admin", request.url));
     } catch (err) {
       // Invalid token; allow access to login
+      console.log(err);
       return NextResponse.next();
     }
   }
