@@ -13,7 +13,6 @@
 # testing
 /coverage
 
-/prisma/dev.db
 
 # next.js
 /.next/

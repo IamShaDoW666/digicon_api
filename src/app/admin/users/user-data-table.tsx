@@ -156,6 +156,13 @@ const columns: ColumnDef<UserWithMediaAndBatches>[] = [
     },
   },
   {
+    accessorKey: "Role",
+    header: "Role",
+    cell: ({ row }) => {
+      return <Badge variant={"secondary"}>{row.original.role}</Badge>;
+    },
+  },
+  {
     accessorKey: "Media",
     header: "Media",
     cell: ({ row }) => {
@@ -263,7 +270,7 @@ export function DataTable({
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
-  [data]
+    [data]
   );
 
   const table = useReactTable({

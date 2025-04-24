@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
   allowedDevOrigins: ["*"],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
+  },
   images: {
     remotePatterns: [
       {
