@@ -35,12 +35,18 @@ const batchesList = async ({ params }: { params: Promise<{ id: string }> }) => {
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:underline"
                     >
-                      <Image
+                      <img
                         src={media.url}
                         alt={media.title ?? media.id}
                         width={500}
                         height={500}
                       />
+                      {/* <Image
+                        src={media.url}
+                        alt={media.title ?? media.id}
+                        width={500}
+                        height={500}
+                      /> */}
                     </a>
                   </div>
                 );
