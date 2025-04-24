@@ -56,7 +56,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       // Compress with Sharp: resize + JPEG quality
       const optimizedBuffer = await sharp(buffer)
         .resize({ width: 1024 }) // Resize to max width 1024px :contentReference[oaicite:6]{index=6}
-        .jpeg({ quality: 80 }) // Compress JPEG to 80% quality :contentReference[oaicite:7]{index=7}
+        .jpeg({ quality: 70 }) // Compress JPEG to 80% quality :contentReference[oaicite:7]{index=7}
         .toBuffer(); // Get processed Buffer :contentReference[oaicite:8]{index=8}
 
       // Define output filename and path

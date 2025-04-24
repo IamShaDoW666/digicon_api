@@ -84,6 +84,7 @@ import { toast } from "sonner";
 import { deleteBatch } from "@/actions/batch";
 import { Toaster } from "@/components/ui/sonner";
 import { Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 // function DragHandle({ id }: { id: string }) {
 //   const { attributes, listeners } = useSortable({
@@ -229,6 +230,8 @@ export function DataTable({
   data: BatchWithMediaAndCreatedBy[];
 }) {
   const [data, setData] = React.useState(() => initialData);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [initalData] = React.useState(data);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -251,6 +254,22 @@ export function DataTable({
     () => data?.map(({ id }) => id) || [],
     [data]
   );
+
+  React.useEffect(() => {
+    setData(
+      initalData.filter((batch) => {
+        return batch.reference.toLowerCase().includes(searchTerm.toLowerCase());
+        // ||
+        // batch.createdBy.name
+        //   ?.toLowerCase()
+        //   .includes(searchTerm.toLowerCase()) ||
+        // batch.createdBy.email
+        //   ?.toLowerCase()
+        //   .includes(searchTerm.toLowerCase()) ||
+        // batch.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      })
+    );
+  }, [searchTerm, initalData]);
 
   const table = useReactTable({
     data,
@@ -293,6 +312,12 @@ export function DataTable({
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6"
     >
+      <Input
+        className="max-w-1/4 mx-6"
+        value={searchTerm}
+        placeholder="Search by reference"
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
       <div className="flex items-center justify-between px-4 lg:px-6">
         <Label htmlFor="view-selector" className="sr-only">
           View
