@@ -5,6 +5,9 @@ import { decrypt } from "./lib/auth";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
+  if (pathname == "/") {
+    return NextResponse.redirect(new URL("/admin", request.url));
+  }
   // Redirect unauthenticated users trying to access /admin routes
   if (pathname.startsWith("/admin")) {
     if (!token) {
