@@ -3,7 +3,7 @@ import { withAuth } from "@/lib/middleware/withAuth";
 import { sendError, sendSuccess } from "@/lib/network";
 import bcrypt from "bcryptjs";
 
-export const POST = withAuth(async (request, user) => {
+export const POST = withAuth(async (request) => {
   try {
     const req = await request.json();
     const userData = await prisma.user.findUnique({
