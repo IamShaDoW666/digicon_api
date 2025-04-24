@@ -40,7 +40,7 @@ const userSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").optional(),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone must be at least 10 digits").optional(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().optional(),
   role: z.enum(["ADMIN", "USER"]),
 });
 
@@ -68,6 +68,7 @@ const UserProfile = ({
       name: name ?? "",
       email: email,
       phone: phone,
+      password: "",
       role: role,
     },
   });
@@ -94,9 +95,9 @@ const UserProfile = ({
         data.name ?? "",
         data.email,
         data.phone ?? "",
-        data.password,
+        imageUrl,
         data.role,
-        imageUrl
+        data.password!
       );
       let result = {
         success: true,

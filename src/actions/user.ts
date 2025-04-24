@@ -64,9 +64,9 @@ export const updateUser = async (
   name: string,
   email: string,
   phone: string,
-  password: string,
+  profile: string,
   role: "ADMIN" | "USER",
-  profile: string
+  password?: string
 ) => {
   if (!userId) {
     throw new Error("User ID is required");
@@ -85,7 +85,9 @@ export const updateUser = async (
         email: email,
         phone: phone,
         role: role,
-        password: await bcrypt.hash(password, 10),
+        password: password?.length
+          ? await bcrypt.hash(password!, 10)
+          : user.password,
       },
     });
 
