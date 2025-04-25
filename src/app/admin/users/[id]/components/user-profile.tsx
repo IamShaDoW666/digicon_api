@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 const userSchema = z.object({
   id: z.string(),
@@ -77,7 +78,7 @@ const UserProfile = ({
   );
 
   const [profileFile, setProfileFile] = useState<File>();
-
+  const router = useRouter();
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -107,19 +108,21 @@ const UserProfile = ({
       }
 
       if (res.success && result.success) {
-        toast("User updated successfully");
+        toast.success("User updated successfully! 🎉");
+
+        router.back();
         setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+          router.refresh();
+        }, 100);
       }
     } catch (err) {
+      toast.error("Error updating user");
       console.log(err);
     }
   };
 
   return (
     <Card className="">
-      <Toaster />
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>

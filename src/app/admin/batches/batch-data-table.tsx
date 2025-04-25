@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   DndContext,
   KeyboardSensor,
@@ -43,6 +42,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { deleteBatch } from "@/actions/batch";
+import { BatchWithMediaAndCreatedBy } from "@/components/section-cards";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -72,19 +75,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { BatchWithMediaAndCreatedBy } from "@/components/section-cards";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Link from "next/link";
-import { toast } from "sonner";
-import { deleteBatch } from "@/actions/batch";
-import { Toaster } from "@/components/ui/sonner";
 import { Trash2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // function DragHandle({ id }: { id: string }) {
 //   const { attributes, listeners } = useSortable({
@@ -104,100 +104,6 @@ import { Input } from "@/components/ui/input";
 //     </Button>
 //   );
 // }
-
-const columns: ColumnDef<BatchWithMediaAndCreatedBy>[] = [
-  {
-    id: "number",
-    header: "#",
-    cell: ({ row }) => <Badge variant={"outline"}>{row.index + 1}</Badge>,
-  },
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={
-  //           table.getIsAllPageRowsSelected() ||
-  //           (table.getIsSomePageRowsSelected() && "indeterminate")
-  //         }
-  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //         aria-label="Select all"
-  //       />
-  //     </div>
-  //   ),
-  //   cell: ({ row }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //         aria-label="Select row"
-  //       />
-  //     </div>
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
-  {
-    accessorKey: "reference",
-    header: "Reference",
-    cell: ({ row }) => {
-      return (
-        <Link href={`/admin/batches/${row.original.id}`}>
-          {row.original.reference}
-        </Link>
-      );
-    },
-    enableHiding: false,
-  },
-  {
-    accessorKey: "Media",
-    header: "Media",
-    cell: ({ row }) => {
-      return (
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.media.length}
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: "Created At",
-    header: "Created At",
-    cell: ({ row }) => {
-      const date = new Date(row.original.createdAt);
-      const formattedDate = date.toISOString().split("T")[0];
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>{formattedDate}</TooltipTrigger>
-            <TooltipContent>
-              <p>{date.toLocaleTimeString()}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    },
-  },
-  {
-    accessorKey: "Created By",
-    header: "Created By",
-    cell: ({ row }) => {
-      return row.original.createdBy.name;
-    },
-  },
-  {
-    id: "actions",
-    header: () => "Actions",
-    cell: ({ row }) => (
-      <Button
-        variant={"destructive"}
-        onClick={() => handleDelete(row.original.id)}
-      >
-        <Trash2 />
-      </Button>
-    ),
-  },
-];
 
 function DraggableRow({ row }: { row: Row<BatchWithMediaAndCreatedBy> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -231,7 +137,6 @@ export function DataTable({
 }) {
   const [data, setData] = React.useState(() => initialData);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [initalData] = React.useState(data);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -250,6 +155,28 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   );
 
+  const router = useRouter();
+  async function handleDelete(id: string) {
+    const confirmed = confirm(
+      "Are you sure you want to delete this batch? This action cannot be undone."
+    );
+    if (!confirmed) {
+      return;
+    }
+    try {
+      const response = await deleteBatch(id);
+      if (response.success) {
+        toast("Batch deleted successfully");
+        router.refresh();
+      } else {
+        toast("Error deleting Batch");
+      }
+    } catch (error) {
+      console.error("Error deleting batch:", error);
+      toast("Error deleting Batch");
+    }
+  }
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
@@ -257,7 +184,7 @@ export function DataTable({
 
   React.useEffect(() => {
     setData(
-      initalData.filter((batch) => {
+      initialData.filter((batch) => {
         return batch.reference.toLowerCase().includes(searchTerm.toLowerCase());
         // ||
         // batch.createdBy.name
@@ -269,8 +196,100 @@ export function DataTable({
         // batch.name?.toLowerCase().includes(searchTerm.toLowerCase())
       })
     );
-  }, [searchTerm, initalData]);
-
+  }, [searchTerm, initialData]);
+  const columns: ColumnDef<BatchWithMediaAndCreatedBy>[] = [
+    {
+      id: "number",
+      header: "#",
+      cell: ({ row }) => <Badge variant={"outline"}>{row.index + 1}</Badge>,
+    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <div className="flex items-center justify-center">
+    //       <Checkbox
+    //         checked={
+    //           table.getIsAllPageRowsSelected() ||
+    //           (table.getIsSomePageRowsSelected() && "indeterminate")
+    //         }
+    //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //         aria-label="Select all"
+    //       />
+    //     </div>
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="flex items-center justify-center">
+    //       <Checkbox
+    //         checked={row.getIsSelected()}
+    //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //         aria-label="Select row"
+    //       />
+    //     </div>
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
+    {
+      accessorKey: "reference",
+      header: "Reference",
+      cell: ({ row }) => {
+        return (
+          <Link href={`/admin/batches/${row.original.id}`}>
+            {row.original.reference}
+          </Link>
+        );
+      },
+      enableHiding: false,
+    },
+    {
+      accessorKey: "Media",
+      header: "Media",
+      cell: ({ row }) => {
+        return (
+          <Badge variant="outline" className="text-muted-foreground px-1.5">
+            {row.original.media.length}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "Created At",
+      header: "Created At",
+      cell: ({ row }) => {
+        const date = new Date(row.original.createdAt);
+        const formattedDate = date.toISOString().split("T")[0];
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>{formattedDate}</TooltipTrigger>
+              <TooltipContent>
+                <p>{date.toLocaleTimeString()}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      },
+    },
+    {
+      accessorKey: "Created By",
+      header: "Created By",
+      cell: ({ row }) => {
+        return row.original.createdBy.name;
+      },
+    },
+    {
+      id: "actions",
+      header: () => "Actions",
+      cell: ({ row }) => (
+        <Button
+          variant={"destructive"}
+          onClick={() => handleDelete(row.original.id)}
+        >
+          <Trash2 />
+        </Button>
+      ),
+    },
+  ];
   const table = useReactTable({
     data,
     columns,
@@ -358,7 +377,6 @@ export function DataTable({
           </DropdownMenu>
         </div>
       </div>
-      <Toaster />
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
@@ -509,27 +527,4 @@ export function DataTable({
       </TabsContent>
     </Tabs>
   );
-}
-
-async function handleDelete(id: string) {
-  const confirmed = confirm(
-    "Are you sure you want to delete this batch? This action cannot be undone."
-  );
-  if (!confirmed) {
-    return;
-  }
-  try {
-    const response = await deleteBatch(id);
-    if (response.success) {
-      toast("Batch deleted successfully");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } else {
-      toast("Error deleting Batch");
-    }
-  } catch (error) {
-    console.error("Error deleting batch:", error);
-    toast("Error deleting Batch");
-  }
 }
