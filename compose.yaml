@@ -1,0 +1,14 @@
+services:
+  digicon_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: digicon_api
+    ports:
+      - "3301:3301"
+    env_file:
+      - .env
+    volumes:
+      - ./public/uploads:/app/public/uploads
+      - ./prisma:/app/prisma
+    command: "npm run start"

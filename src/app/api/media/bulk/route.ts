@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 import path from "path";
 import fs from "fs/promises";
 
-export const DELETE = withAuth(async (request: NextRequest, user) => {
+export const DELETE = withAuth(async (request: NextRequest) => {
   try {
     const { mediaIds } = await request.json();
     if (!mediaIds || !Array.isArray(mediaIds)) {
@@ -19,7 +19,7 @@ export const DELETE = withAuth(async (request: NextRequest, user) => {
       },
     });
     const deleteFilePromises = mediaRecords.map(async (media) => {
-      const filePath = path.resolve(media.url); // Adjust if 'filepath' includes full path
+      const filePath = path.join(process.cwd(), "public", media.url); // Adjust if 'filepath' includes full path
       try {
         await fs.unlink(filePath);
         await prisma.media.delete({
@@ -33,7 +33,7 @@ export const DELETE = withAuth(async (request: NextRequest, user) => {
       }
     });
     await Promise.all(deleteFilePromises);
-    return sendSuccess(mediaIds, "Media deleted successfully", 204);
+    return sendSuccess(mediaRecords);
   } catch (error) {
     console.error("Error parsing JSON:", error);
     return sendError("Invalid JSON", 400);

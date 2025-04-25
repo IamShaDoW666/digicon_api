@@ -19,11 +19,19 @@ enum ImageType {
   UPLOAD
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
 model User {
   id             String   @id @default(cuid())
   name           String?
   email          String   @unique
   password       String?
+  profile        String?
+  phone          String?
+  role           Role     @default(USER)
   uploadedMedia  Media[]
   createdBatches Batch[]
   createdAt      DateTime @default(now())

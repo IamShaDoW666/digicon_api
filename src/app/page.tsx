@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Moon, Rss } from "lucide-react";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -32,9 +33,11 @@ export default function Home() {
 
         <section className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="flex items-center gap-4">
-            <img
-              src="https://avatars.githubusercontent.com/u/14134092?v=4"
+            <Image
+              src="https://avatars.githubusercontent.com/u/102310?v=4"
               alt="Sumit Chandel"
+              width={64}
+              height={64}
               className="w-16 h-16 rounded-md object-cover"
             />
             <div>
@@ -43,9 +46,11 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <img
+            <Image
               src="https://avatars.githubusercontent.com/u/25479359?v=4"
               alt="Alice Yuan"
+              width={64}
+              height={64}
               className="w-16 h-16 rounded-md object-cover"
             />
             <div>
@@ -68,6 +73,7 @@ export default function Home() {
             Doze Mode
           </span>
         </div>
+        <Button className="mt-4">Click me</Button>
       </main>
     </div>
   );

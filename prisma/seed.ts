@@ -17,6 +17,7 @@ async function main() {
       name: "Test User",
       email: "test@test.com",
       password: await bcrypt.hash("password", 10),
+      role: "ADMIN",
     },
   });
   console.log(`${users.count} users created.`);

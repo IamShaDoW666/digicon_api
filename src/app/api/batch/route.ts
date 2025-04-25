@@ -6,20 +6,37 @@ import fs from "fs";
 import sharp from "sharp";
 import { withAuth } from "@/lib/middleware/withAuth";
 
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async (request, user) => {
   try {
     const batches = await prisma.batch.findMany({
       include: { media: true, createdBy: true },
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     if (!batches) {
       return sendError("No batches found", 404);
     }
-    return sendSuccess(batches, "Batches found", 200);
+    const transformedBatches = batches.map((batch) => {
+      return {
+        ...batch,
+        media: batch.media.map((media) => {
+          return {
+            ...media,
+            url: `${process.env.BASE_URL}${media.url}`, // Normalize the URL for cross-platform compatibility
+          };
+        }),
+      };
+    });
+    return sendSuccess(transformedBatches, "Batches found", 200);
   } catch (error) {
     console.error(error);
     return sendError("Internal server error", 500);
   }
-}
+});
 
 export const POST = withAuth(async (request: NextRequest, user) => {
   const formData = await request.formData();
@@ -39,7 +56,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       // Compress with Sharp: resize + JPEG quality
       const optimizedBuffer = await sharp(buffer)
         .resize({ width: 1024 }) // Resize to max width 1024px :contentReference[oaicite:6]{index=6}
-        .jpeg({ quality: 80 }) // Compress JPEG to 80% quality :contentReference[oaicite:7]{index=7}
+        .jpeg({ quality: 70 }) // Compress JPEG to 80% quality :contentReference[oaicite:7]{index=7}
         .toBuffer(); // Get processed Buffer :contentReference[oaicite:8]{index=8}
 
       // Define output filename and path
@@ -152,6 +169,9 @@ export const PUT = withAuth(async (request: NextRequest, user) => {
       where: {
         id: batchId,
       },
+      include: {
+        media: true,
+      },
       data: {
         name: `BULK_${Date.now()}${ref}`,
         reference: ref,
@@ -174,11 +194,8 @@ export const PUT = withAuth(async (request: NextRequest, user) => {
           },
         },
       },
-      include: {
-        media: true,
-      },
     });
-    return sendSuccess(updatedBatch, "Batch updated", 200);
+    return sendSuccess(updatedBatch.media, "Batch updated", 200);
   } catch (error) {
     uploaded.forEach(async (file) => {
       const filePath = path.join(uploadDir, file.filepath);

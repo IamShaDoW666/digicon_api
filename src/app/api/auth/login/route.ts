@@ -13,6 +13,10 @@ export async function POST(req: Request) {
       where: {
         email: email,
       },
+      include: {
+        uploadedMedia: true,
+        createdBatches: true,
+      },
     });
     if (!user) {
       return sendError("Email not found", 401);
