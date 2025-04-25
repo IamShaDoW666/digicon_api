@@ -1,10 +1,11 @@
 "use server";
-import { UserFormData } from "@/app/admin/users/new-user-modal";
+
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import path from "path";
 import sharp from "sharp";
 import fs from "fs";
+import { userCreateSchema, UserFormData } from "@/schema/userSchema";
 export const deleteUser = async (userId: string) => {
   if (!userId) {
     throw new Error("User ID is required");
@@ -99,17 +100,19 @@ export const updateUser = async (
 };
 
 export const createUser = async (userData: UserFormData) => {
-  // const validatedFields = userCreateSchema.safeParse(userData);
-  // if (!validatedFields.success) {
-  //   throw new Error("Invalid user data");
-  // }
+  const validatedFields = userCreateSchema.safeParse(userData);
+  if (!validatedFields.success) {
+    throw new Error("Invalid user data");
+  }
   try {
+    console.log(validatedFields.data);
     const newUser = await prisma.user.create({
       data: {
-        name: userData.name,
-        email: userData.email,
-        // phone: userData.phone,
-        password: await bcrypt.hash(userData.password, 10),
+        name: validatedFields.data.name,
+        email: validatedFields.data.email,
+        phone: validatedFields.data.phone,
+        role: validatedFields.data.role,
+        password: await bcrypt.hash(validatedFields.data.password, 10),
       },
     });
     return {

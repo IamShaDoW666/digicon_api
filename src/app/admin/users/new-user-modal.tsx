@@ -1,43 +1,42 @@
 "use client";
 
-import * as React from "react";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { createUser } from "@/actions/user";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { createUser } from "@/actions/user";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { userCreateSchema, UserFormData } from "@/schema/userSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SelectValue } from "@radix-ui/react-select";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-export const userCreateSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone must be at least 10 digits"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-export type UserFormData = z.infer<typeof userCreateSchema>;
 
 export function NewUserModal() {
   const [open, setOpen] = React.useState(false);
-
+  const router = useRouter();
   const form = useForm<UserFormData>({
     resolver: zodResolver(userCreateSchema),
     defaultValues: {
@@ -45,24 +44,28 @@ export function NewUserModal() {
       email: "",
       phone: "",
       password: "",
+      role: "USER",
     },
   });
 
   const onSubmit = async (data: UserFormData) => {
     // Implement your user creation logic here (e.g., API call)
-    const res = await createUser(data);
-    if (!res.success) {
-      toast.error("Error creating user");
-      console.error("Error creating user");
-      return;
-    }
+    try {
+      const res = await createUser(data);
+      if (!res.success) {
+        toast.error("Error creating user");
+        console.error("Error creating user");
+        return;
+      }
 
-    toast.success("User created successfully");
-    setOpen(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 800);
-    form.reset();
+      toast.success("User created successfully! 🎉");
+      setOpen(false);
+      router.refresh();
+      form.reset();
+    } catch (e) {
+      console.log(e);
+      toast.error("Error creating user!");
+    }
   };
 
   return (
@@ -132,6 +135,31 @@ export function NewUserModal() {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Role" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="USER">User</SelectItem>
+                    </SelectContent>
+                  </Select>
+
                   <FormMessage />
                 </FormItem>
               )}

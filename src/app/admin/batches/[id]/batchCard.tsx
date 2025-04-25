@@ -22,6 +22,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { updateBatch } from "@/actions/batch";
+import { useRouter } from "next/navigation";
 
 // Define the form schema using zod
 const batchSchema = z.object({
@@ -37,6 +38,7 @@ interface BatchCardProps {
 }
 
 export function BatchCard({ reference, id }: BatchCardProps) {
+  const router = useRouter();
   const form = useForm<BatchFormValues>({
     resolver: zodResolver(batchSchema),
     defaultValues: { reference: reference.slice(7), id },
@@ -46,8 +48,11 @@ export function BatchCard({ reference, id }: BatchCardProps) {
     try {
       const res = await updateBatch(data);
       if (res.success) {
-        toast("Batch updated successfully");
-        window.location.reload(); // Reload the page to reflect changes
+        toast.success("Batch updated successfully 🎉");
+        router.back();
+        setTimeout(() => {
+          router.refresh();
+        }, 100);
       } else {
         toast.error(res.message || "Failed to update batch");
       }

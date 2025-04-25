@@ -1,6 +1,31 @@
 "use client";
 
-import * as React from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
   DndContext,
   KeyboardSensor,
@@ -45,40 +70,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import * as React from "react";
 
+import { deleteUser } from "@/actions/user";
+import { Input } from "@/components/ui/input";
+import type { Prisma } from "@prisma/client";
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
-import { Trash2 } from "lucide-react";
-import type { Prisma } from "@prisma/client";
-import { Input } from "@/components/ui/input";
-import { deleteUser } from "@/actions/user";
+import { useRouter } from "next/navigation";
 export type UserWithMediaAndBatches = Prisma.UserGetPayload<{
   include: {
     uploadedMedia: true;
@@ -103,108 +103,6 @@ export type UserWithMediaAndBatches = Prisma.UserGetPayload<{
 //     </Button>
 //   );
 // }
-
-const columns: ColumnDef<UserWithMediaAndBatches>[] = [
-  {
-    id: "number",
-    header: "#",
-    cell: ({ row }) => <Badge variant={"outline"}>{row.index + 1}</Badge>,
-  },
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={
-  //           table.getIsAllPageRowsSelected() ||
-  //           (table.getIsSomePageRowsSelected() && "indeterminate")
-  //         }
-  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //         aria-label="Select all"
-  //       />
-  //     </div>
-  //   ),
-  //   cell: ({ row }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //         aria-label="Select row"
-  //       />
-  //     </div>
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => {
-      return (
-        <Link href={`/admin/users/${row.original.id}`}>
-          {row.original.name}
-        </Link>
-      );
-    },
-    enableHiding: false,
-  },
-  {
-    accessorKey: "Email",
-    header: "Email",
-    cell: ({ row }) => {
-      return row.original.email;
-    },
-  },
-  {
-    accessorKey: "Role",
-    header: "Role",
-    cell: ({ row }) => {
-      return <Badge variant={"secondary"}>{row.original.role}</Badge>;
-    },
-  },
-  {
-    accessorKey: "Media",
-    header: "Media",
-    cell: ({ row }) => {
-      return <Badge>{row.original.uploadedMedia.length}</Badge>;
-    },
-  },
-  {
-    accessorKey: "Batches",
-    header: "Batches",
-    cell: ({ row }) => {
-      return <Badge>{row.original.createdBatches.length}</Badge>;
-    },
-  },
-  {
-    id: "actions",
-    header: () => "Actions",
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <IconDotsVertical className="text-muted-foreground size-3" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            <Link passHref href={`/admin/users/${row.original.id}`}>
-              <div className="flex items-center">
-                <IconCircleCheckFilled className="mr-2 size-4" />
-                View
-              </div>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleDelete(row.original.id)}>
-            <Trash2 />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-];
 
 function DraggableRow({ row }: { row: Row<UserWithMediaAndBatches> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -236,9 +134,9 @@ export function DataTable({
 }: {
   data: UserWithMediaAndBatches[];
 }) {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = React.useState("");
   const [data, setData] = React.useState(() => initialData);
-  const [initalData] = React.useState(data);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -259,19 +157,148 @@ export function DataTable({
 
   React.useEffect(() => {
     setData(
-      initalData.filter((user) => {
+      initialData.filter((user) => {
         return (
           user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
       })
     );
-  }, [searchTerm, initalData]);
+  }, [searchTerm, initialData]);
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
   );
+
+  async function handleDelete(id: string) {
+    const confirmed = confirm(
+      "Are you sure you want to delete this user? This action cannot be undone."
+    );
+    if (!confirmed) {
+      return;
+    }
+    try {
+      const response = await deleteUser(id);
+      if (response.success) {
+        toast.success("User deleted successfully 🎉");
+        router.refresh();
+      } else {
+        toast.error("Error deleting User");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast("Error deleting User");
+    }
+  }
+  const columns: ColumnDef<UserWithMediaAndBatches>[] = [
+    {
+      id: "number",
+      header: "#",
+      cell: ({ row }) => <Badge variant={"outline"}>{row.index + 1}</Badge>,
+    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <div className="flex items-center justify-center">
+    //       <Checkbox
+    //         checked={
+    //           table.getIsAllPageRowsSelected() ||
+    //           (table.getIsSomePageRowsSelected() && "indeterminate")
+    //         }
+    //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //         aria-label="Select all"
+    //       />
+    //     </div>
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="flex items-center justify-center">
+    //       <Checkbox
+    //         checked={row.getIsSelected()}
+    //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //         aria-label="Select row"
+    //       />
+    //     </div>
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => {
+        return (
+          <Link href={`/admin/users/${row.original.id}`}>
+            {row.original.name}
+          </Link>
+        );
+      },
+      enableHiding: false,
+    },
+    {
+      accessorKey: "Email",
+      header: "Email",
+      cell: ({ row }) => {
+        return row.original.email;
+      },
+    },
+    {
+      accessorKey: "Phone",
+      header: "Phone",
+      cell: ({ row }) => {
+        return row.original.phone ?? "-";
+      },
+    },
+    {
+      accessorKey: "Role",
+      header: "Role",
+      cell: ({ row }) => {
+        return <Badge variant={"secondary"}>{row.original.role}</Badge>;
+      },
+    },
+    {
+      accessorKey: "Media",
+      header: "Media",
+      cell: ({ row }) => {
+        return <Badge>{row.original.uploadedMedia.length}</Badge>;
+      },
+    },
+    {
+      accessorKey: "Batches",
+      header: "Batches",
+      cell: ({ row }) => {
+        return <Badge>{row.original.createdBatches.length}</Badge>;
+      },
+    },
+    {
+      id: "actions",
+      header: () => "Actions",
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <IconDotsVertical className="text-muted-foreground size-3" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Link passHref href={`/admin/users/${row.original.id}`}>
+                <div className="flex items-center">
+                  <IconCircleCheckFilled className="mr-2 size-4" />
+                  View
+                </div>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete(row.original.id)}>
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -361,7 +388,6 @@ export function DataTable({
             </DropdownMenu>
           </div>
         </div>
-        <Toaster />
         <TabsContent
           value="outline"
           className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
@@ -516,27 +542,4 @@ export function DataTable({
       </Tabs>
     </>
   );
-}
-
-async function handleDelete(id: string) {
-  const confirmed = confirm(
-    "Are you sure you want to delete this user? This action cannot be undone."
-  );
-  if (!confirmed) {
-    return;
-  }
-  try {
-    const response = await deleteUser(id);
-    if (response.success) {
-      toast("User deleted successfully");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } else {
-      toast("Error deleting User");
-    }
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    toast("Error deleting User");
-  }
 }
