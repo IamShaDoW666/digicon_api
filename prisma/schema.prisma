@@ -9,9 +9,14 @@ generator client {
   // output   = "../src/generated/prisma"
 }
 
+//datasource db {
+// provider = "sqlite"
+// url      = env("DATABASE_URL")
+//}
+
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+provider = "mysql"
+url      = env("DATABASE_URL")
 }
 
 enum ImageType {
