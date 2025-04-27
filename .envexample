@@ -1,0 +1,5 @@
+PORT=3301
+# DATABASE_URL=file:./dev.db
+JWT_SECRET=secret
+BASE_URL=http://localhost:3301
+DATABASE_URL= mysql://digicorn:Digicorn@2025@localhost:3306/digicorn
