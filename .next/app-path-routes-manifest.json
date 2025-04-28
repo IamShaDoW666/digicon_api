@@ -1,0 +1,19 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/auth/route": "/api/auth",
+  "/api/users/[id]/route": "/api/users/[id]",
+  "/api/users/route": "/api/users",
+  "/favicon.ico/route": "/favicon.ico",
+  "/api/auth/login/route": "/api/auth/login",
+  "/api/users/change-password/route": "/api/users/change-password",
+  "/api/media/bulk/route": "/api/media/bulk",
+  "/api/batch/[id]/route": "/api/batch/[id]",
+  "/api/batch/route": "/api/batch",
+  "/login/page": "/login",
+  "/page": "/",
+  "/admin/page": "/admin",
+  "/admin/users/[id]/page": "/admin/users/[id]",
+  "/admin/batches/[id]/page": "/admin/batches/[id]",
+  "/admin/users/page": "/admin/users",
+  "/admin/batches/page": "/admin/batches"
+}
