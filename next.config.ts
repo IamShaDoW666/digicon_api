@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["*"],
   experimental: {
     serverActions: {
-      bodySizeLimit: "3mb",
+      bodySizeLimit: "8mb",
+      allowedOrigins: ["*"],
     },
   },
   images: {
