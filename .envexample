@@ -1,0 +1,4 @@
+PORT=3301
+DATABASE_URL=mysql://username:password@localhost:3306/database_name
+JWT_SECRET=secret
+BASE_URL=http://192.168.18.38:3000
