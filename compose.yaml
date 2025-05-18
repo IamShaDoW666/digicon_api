@@ -1,9 +1,9 @@
 services:
-  digicon_api:
+  digiconsinga_api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: digicon_api
+    container_name: digiconsinga_api
     ports:
       - "3000:3000"
     extra_hosts:
