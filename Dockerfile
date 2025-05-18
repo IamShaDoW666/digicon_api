@@ -33,4 +33,4 @@ COPY --from=builder /app ./
 # COPY --from=builder /app/next.config.ts ./
 
 # Expose the application port
-EXPOSE 3301
+EXPOSE 3000

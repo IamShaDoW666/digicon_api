@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: digicon_api
     ports:
-      - "3301:3301"
+      - "3000:3000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
