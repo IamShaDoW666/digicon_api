@@ -6,6 +6,8 @@ services:
     container_name: digicon_api
     ports:
       - "3301:3301"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
       - .env
     volumes:

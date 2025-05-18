@@ -56,7 +56,7 @@ export function LoginForm({
     
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex items-center justify-center h-full">
-         <p className="text-extrabold text-2xl pb-12">WELCOME TO DIGICON MALASIA</p>
+         <p className="text-extrabold text-2xl pb-12">WELCOME TO DIGICON MALAYSIA</p>
       </div>
       
       <Card>
