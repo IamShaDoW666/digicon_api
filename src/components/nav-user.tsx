@@ -34,7 +34,7 @@ export function NavUser({ user }: { user: UserAuth }) {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src={user.profile ?? "https://dummyimage.com/300x300/000/fff"}
+                  src={user?.profile ?? "https://dummyimage.com/300x300/000/fff"}
                   alt={user?.name}
                 />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
@@ -59,7 +59,7 @@ export function NavUser({ user }: { user: UserAuth }) {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
                     src={
-                      user.profile ?? "https://dummyimage.com/300x300/000/fff"
+                      user?.profile ?? "https://dummyimage.com/300x300/000/fff"
                     }
                     alt={user?.email}
                   />

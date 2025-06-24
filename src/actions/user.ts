@@ -6,6 +6,7 @@ import path from "path";
 import sharp from "sharp";
 import fs from "fs";
 import { userCreateSchema, UserFormData } from "@/schema/userSchema";
+import { smtp } from "@/lib/smtp";
 export const deleteUser = async (userId: string) => {
   if (!userId) {
     throw new Error("User ID is required");
@@ -115,6 +116,86 @@ export const createUser = async (userData: UserFormData) => {
         password: await bcrypt.hash(validatedFields.data.password, 10),
       },
     });
+
+    // Send welcome email (optional)
+    smtp.sendMail({
+      from: process.env.SMTP_USER,
+      to: validatedFields.data.email,
+      subject: `Welcome ${validatedFields.data.name} to DigiCon!`,
+      html: `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Welcome to DigiCon</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f7;
+        margin: 0;
+        padding: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        padding: 20px 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      }
+      h2 {
+        color: #2e6bff;
+      }
+      .button {
+        display: inline-block;
+        margin-top: 20px;
+        background-color: #2e6bff;
+        color: #ffffff !important;
+        padding: 12px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      .credentials {
+        background-color: #f1f1f1;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        font-family: monospace;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 13px;
+        color: #777777;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <h2>Welcome to DigiCon, ${validatedFields.data.name}!</h2>
+      <p>We’re excited to have you on board. Below are your login credentials to access your account:</p>
+
+      <div class="credentials">
+        <p><strong>Email:</strong> ${validatedFields.data.email}</p>
+        <p><strong>Password:</strong> ${validatedFields.data.password}</p>
+      </div>
+
+      <p>You can log in using the link below:</p>
+      <a href="${
+        process.env.BASE_URL
+      }/login" class="button">Log In to DigiCon</a>
+
+      <p>If you have any questions or need help, just reply to this email—we’re here to help!</p>
+
+      <div class="footer">
+        &copy; ${new Date().getFullYear()} DigiCon. All rights reserved.
+      </div>
+    </div>
+  </body>
+</html>
+`,
+    });
+
     return {
       success: true,
       message: "User created successfully",

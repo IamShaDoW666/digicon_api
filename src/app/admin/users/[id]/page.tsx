@@ -21,12 +21,12 @@ const userView = async ({ params }: { params: Promise<{ id: string }> }) => {
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             <UserProfile
-              name={user.name ?? ""}
-              id={user.id}
-              email={user.email}
-              phone={user.phone ?? ""}
-              profile={user.profile!}
-              role={user.role}
+              name={user?.name ?? ""}
+              id={user?.id}
+              email={user?.email}
+              phone={user?.phone ?? ""}
+              profile={user?.profile!}
+              role={user?.role}
             />
           </div>
         </div>
