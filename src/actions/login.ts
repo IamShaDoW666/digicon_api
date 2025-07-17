@@ -51,7 +51,7 @@ export async function loginAction(formData: LoginFormValues) {
     email: user.email,
     time: new Date(),
     role: user.role,
-    profile: user?.profile!,
+    profile: user!.profile!,
     phone: user.phone!,
   });
   const cookieStore = await cookies();

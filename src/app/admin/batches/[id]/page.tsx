@@ -3,6 +3,10 @@ import { SiteHeader } from "@/components/site-header";
 import { prisma } from "@/lib/db";
 import Image from "next/image";
 import { BatchCard } from "./batchCard";
+import { Button } from "@/components/ui/button";
+import { Download, Share } from "lucide-react";
+import { IconPdf } from "@tabler/icons-react";
+import MediaOptions from "@/components/media-options";
 const batchesList = async ({ params }: { params: Promise<{ id: string }> }) => {
   const batch = await prisma.batch.findFirst({
     where: {
@@ -14,6 +18,7 @@ const batchesList = async ({ params }: { params: Promise<{ id: string }> }) => {
     },
   });
 
+ 
   return (
     <>
       <SiteHeader title={batch?.reference!} />
@@ -21,6 +26,7 @@ const batchesList = async ({ params }: { params: Promise<{ id: string }> }) => {
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             <BatchCard reference={batch?.reference!} id={batch?.id!} />
+            <MediaOptions media={batch?.media} batchReference={batch?.reference ?? "batch"} />
             {batch?.media.length! > 0 && (
               <h2 className="font-semibold">Media</h2>
             )}

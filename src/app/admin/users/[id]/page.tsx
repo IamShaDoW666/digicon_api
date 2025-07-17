@@ -25,7 +25,7 @@ const userView = async ({ params }: { params: Promise<{ id: string }> }) => {
               id={user?.id}
               email={user?.email}
               phone={user?.phone ?? ""}
-              profile={user?.profile!}
+              profile={user!.profile!}
               role={user?.role}
             />
           </div>
